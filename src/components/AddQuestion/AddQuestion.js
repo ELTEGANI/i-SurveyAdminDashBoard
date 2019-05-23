@@ -128,19 +128,29 @@ handleSubmit(event) {
 
 
 
-        <label>No Add Answers</label>
-        <br/>
-        <br/>
         <Form.Field>
-          <div>
-          {this.showUi()}        
-          <input type='button' value='Add Answer' onClick={this.addClick.bind(this)}/>
-          </div> 
+          <Checkbox
+            radio
+            label='Add Answers'
+            name='checkboxRadioGroup'
+            value='AddedAnswers'
+            checked={this.state.value === 'AddedAnswers'}
+            onChange={this.handleChange}
+          />
         </Form.Field>
 
-     
-          <br/>   
-          <br/>
+
+        {
+          this.state.questiontype && this.state.questiontype === 'AddedAnswers'?
+        <Form.Field>
+         <div>
+        {this.showUi()}        
+       <input type='button' value='Add Answer' onClick={this.addClick.bind(this)}/>
+        </div> 
+        </Form.Field>  
+        :null
+        }
+        <br/>
     <Button fluid color='red'>Create New Question</Button>
 
   </Form>
