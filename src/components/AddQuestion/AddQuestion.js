@@ -9,14 +9,14 @@ class AddQuestion extends Component {
     super(props);
     this.state = {
       question:"",
-      questiontype:"",
-    	Answers: [{answer:""}]
+      questiontype:"created",
+      Answers: [{answer:""}],
+      Surveyid:"2c022520-7f9a-11e9-9974-b543e76e34c1"
     };
      this.handleSubmit = this.handleSubmit.bind(this);
   }
-
+   
   
-  handleChange = (e, { value }) => this.setState({ value,questiontype:value })
 
   showUi(){
     return this.state.Answers.map((el,i) => (
@@ -65,10 +65,22 @@ addClick(){
 }
 
 handleSubmit(event) {
-  alert('A name was submitted: ' + JSON.stringify(this.state));
   console.log(JSON.stringify(this.state));
   event.preventDefault();
-}
+        let axiosConfig = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiZmM1NzNiZDAtN2Y5OS0xMWU5LTk5NzQtYjU0M2U3NmUzNGMxIiwiaWF0IjoxNTU4OTQwMjU0LCJleHAiOjE1NTkwMjY2NTR9.82VHzN6ND2ZMN4mYdTHuHB6nSbD-Sy2MpkugKUqBvEk' 
+    }
+  };  
+  axios.post('http://localhost:8080/Admin/createquestion',JSON.stringify(this.state),axiosConfig)
+.then(response=>{
+    console.log(response)
+}).catch(error=>{
+    console.log(error)  
+}) 
+   }
+
 
  render(){  
   return(  
@@ -88,68 +100,14 @@ handleSubmit(event) {
        onChange={this.questionhandleChange}
       />
     </Form.Field>   
-
-
-    <label>Question Type</label>
-    <Form.Field>
-        </Form.Field>
-        <Form.Field>
-          <Checkbox
-            radio
-            label='Yes/No'
-            name='checkboxRadioGroup'
-            value='Yes/No'
-            checked={this.state.value === 'Yes/No'}
-            onChange={this.handleChange}
-          />
-        </Form.Field>
-
-        <Form.Field>
-          <Checkbox
-            radio
-            label='True/False'
-            name='checkboxRadioGroup'
-            value='True/False'
-            checked={this.state.value === 'True/False'}
-            onChange={this.handleChange}
-          />
-        </Form.Field>
-
-        <Form.Field>
-          <Checkbox
-            radio
-            label='Excellent/V.good/good/Bad options'
-            name='checkboxRadioGroup'
-            value='Excellent/V.good/good/Bad options'
-            checked={this.state.value === 'Excellent/V.good/good/Bad options'}
-            onChange={this.handleChange}
-          />
-        </Form.Field>
-
-
-
-        <Form.Field>
-          <Checkbox
-            radio
-            label='Add Answers'
-            name='checkboxRadioGroup'
-            value='AddedAnswers'
-            checked={this.state.value === 'AddedAnswers'}
-            onChange={this.handleChange}
-          />
-        </Form.Field>
-
-
-        {
-          this.state.questiontype && this.state.questiontype === 'AddedAnswers'?
+ 
         <Form.Field>
          <div>
         {this.showUi()}        
        <input type='button' value='Add Answer' onClick={this.addClick.bind(this)}/>
         </div> 
         </Form.Field>  
-        :null
-        }
+      
         <br/>
     <Button fluid color='red'>Create New Question</Button>
 
