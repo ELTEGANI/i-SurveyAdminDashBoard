@@ -11,8 +11,9 @@ class AddQuestion extends Component {
       question:"",
       questiontype:"created",
       Answers: [{answer:""}],
-      Surveyid:"2c022520-7f9a-11e9-9974-b543e76e34c1"
-    };
+      Surveyid:"2c022520-7f9a-11e9-9974-b543e76e34c1",
+      errors: {}
+    }
      this.handleSubmit = this.handleSubmit.bind(this);
   }
    
@@ -28,13 +29,14 @@ class AddQuestion extends Component {
        value={el.answer ||''}
        onChange={this.createHandleChange.bind(this, i)} 
        />
+      
 
+        
        <input 
        type='button' 
        value='Remove Answer' 
        onClick={this.removeClick.bind(this, i)}
        />
-
       </div>          
     ))
  }
@@ -46,10 +48,25 @@ class AddQuestion extends Component {
 }
 
 questionhandleChange = (e) => {
-  this.setState({
-    [e.target.name]:e.target.value
-  })
+  if(!!this.state.errors[e.target.name]){
+    let errors = Object.assign({},this.state.errors);
+    delete errors[e.target.name]
+    this.setState({
+      [e.target.name]:e.target.value,errors
+    })
+  }else{
+    this.setState({
+      [e.target.name]:e.target.value
+    })
+  }
 } 
+
+
+validate = () =>{
+  const errors = {};
+  if(this.state.question === '') errors.question = "Question Can't Be Empty";
+  return errors; 
+}  
 
 createHandleChange(i, e) {
   const { name, value } = e.target;
@@ -65,24 +82,36 @@ addClick(){
 }
 
 handleSubmit(event) {
-  console.log(JSON.stringify(this.state));
   event.preventDefault();
-        let axiosConfig = {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiZmM1NzNiZDAtN2Y5OS0xMWU5LTk5NzQtYjU0M2U3NmUzNGMxIiwiaWF0IjoxNTU4OTQwMjU0LCJleHAiOjE1NTkwMjY2NTR9.82VHzN6ND2ZMN4mYdTHuHB6nSbD-Sy2MpkugKUqBvEk' 
+  event.preventDefault();
+  const errors = this.validate();
+  this.setState({errors});
+  const isValid = Object.keys(errors).length === 0;
+  if(isValid){
+    const isonline = navigator.onLine;
+    if(isonline){
+      let axiosConfig = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiZmM1NzNiZDAtN2Y5OS0xMWU5LTk5NzQtYjU0M2U3NmUzNGMxIiwiaWF0IjoxNTU4OTQwMjU0LCJleHAiOjE1NTkwMjY2NTR9.82VHzN6ND2ZMN4mYdTHuHB6nSbD-Sy2MpkugKUqBvEk' 
+        }
+      };  
+      axios.post('http://localhost:8080/Admin/createquestion',JSON.stringify(this.state),axiosConfig)
+    .then(response=>{
+        console.log(response)
+    }).catch(error=>{
+        console.log(error)  
+    }) 
+    }else{
+      alert('Dear User No Internet Connection Available');
     }
-  };  
-  axios.post('http://localhost:8080/Admin/createquestion',JSON.stringify(this.state),axiosConfig)
-.then(response=>{
-    console.log(response)
-}).catch(error=>{
-    console.log(error)  
-}) 
+  }
+    
    }
 
 
  render(){  
+  const {errors} = this.state;  
   return(  
        <div>   
       <Header as='h2' textAlign='center'>
@@ -100,15 +129,22 @@ handleSubmit(event) {
        onChange={this.questionhandleChange}
       />
     </Form.Field>   
- 
+    <span style={{color:"#ae5856"}}>
+     {errors.question && errors.question}
+    </span> 
+
+
         <Form.Field>
          <div>
         {this.showUi()}        
-       <input type='button' value='Add Answer' onClick={this.addClick.bind(this)}/>
+       <input type='button' 
+        value='Add Answer' onClick={this.addClick.bind(this)}/>
         </div> 
         </Form.Field>  
-      
-        <br/>
+         
+
+
+        <br/>  
     <Button fluid color='red'>Create New Question</Button>
 
   </Form>

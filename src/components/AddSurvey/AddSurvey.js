@@ -8,20 +8,44 @@ class AddSurvey extends Component {
      state ={
         title:'',
         description:'',
-        surveyType:''
+        surveyType:'',
+        errors:{}
            }
 
      checkboxhandleChange = (e, { value }) => this.setState({ value ,surveyType:value})
 
      handleChange = (e) => {
-          this.setState({
-            [e.target.name]:e.target.value
-          })  
+       if(!!this.state.errors[e.target.name]){
+        let errors = Object.assign({},this.state.errors);
+        delete errors[e.target.name]
+        this.setState({
+          [e.target.name]:e.target.value,errors
+        })
+       }else{
+        this.setState({
+          [e.target.name]:e.target.value
+        })  
+       }
       }   
 
-    createSurveyHandler = () =>{
-      console.log(this.state)
-        let axiosConfig = {
+
+      validate = () =>{
+        const errors = {};
+        if(this.state.title === '') errors.title = "Title Can't Be Empty";
+        if(this.state.description === '') errors.description = "Description Can't Be Empty";
+        return errors; 
+      }  
+
+
+    createSurveyHandler = (e) =>{
+      e.preventDefault();
+      const errors = this.validate();
+      this.setState({errors});
+      const isValid = Object.keys(errors).length === 0;
+      if(isValid){
+        const isonline = navigator.onLine;
+        if(isonline){
+          let axiosConfig = {
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiODI2ZjRjOTAtN2M3OS0xMWU5LWIxNjktMGQ1ODVhYTZlZTMzIiwiaWF0IjoxNTU4NTE5Njk2LCJleHAiOjE1NTg2MDYwOTZ9.-jwAUnpyW-Ors9uCM0NuZcazz6fCz22I6y0_Vc7GOi0' 
@@ -34,9 +58,16 @@ class AddSurvey extends Component {
         }).catch(error=>{
             console.log(error)  
         })  
+        }else{
+          alert('Dear User No Internet Connection Available');
+        }
+        
+      }
+        
     }  
      
       render(){
+        const {errors} = this.state;  
           return(
             <div>   
       <Header as='h2' textAlign='center'>
@@ -51,15 +82,23 @@ class AddSurvey extends Component {
         onChange={this.handleChange}
       />
     </Form.Field>
+    <span style={{color:"#ae5856"}}>
+     {errors.title && errors.title}
+    </span> 
+
+
 
     <Form.Field>
       <label>Survey Description</label>
       <TextArea placeholder='survey description'
-        name='description'
+        name='description' 
         defaultValue={this.state.description}
        onChange={this.handleChange}
       />
     </Form.Field>
+    <span style={{color:"#ae5856"}}>
+     {errors.description && errors.description}
+    </span> 
 
 
     <Form.Field>
@@ -72,8 +111,11 @@ class AddSurvey extends Component {
             onChange={this.checkboxhandleChange}
           />
         </Form.Field>
+        <span style={{color:"#ae5856"}}>
+         {errors.checkboxRadioGroup && errors.checkboxRadioGroup}
+        </span> 
 
- 
+    
         <Form.Field>
           <Checkbox
             radio
