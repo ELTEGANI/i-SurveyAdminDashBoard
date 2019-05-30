@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {Form,Button,TextArea,Header,Checkbox} from 'semantic-ui-react'
+import {Form,Button,TextArea,Header,Checkbox,Message} from 'semantic-ui-react'
 import axios from 'axios';
 
 
@@ -9,7 +9,8 @@ class AddSurvey extends Component {
         title:'',
         description:'',
         surveyType:'',
-        errors:{}
+        errors:{},
+        msgerror:''
            }
 
      checkboxhandleChange = (e, { value }) => this.setState({ value ,surveyType:value})
@@ -48,13 +49,13 @@ class AddSurvey extends Component {
           let axiosConfig = {
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiODI2ZjRjOTAtN2M3OS0xMWU5LWIxNjktMGQ1ODVhYTZlZTMzIiwiaWF0IjoxNTU4NTE5Njk2LCJleHAiOjE1NTg2MDYwOTZ9.-jwAUnpyW-Ors9uCM0NuZcazz6fCz22I6y0_Vc7GOi0' 
+              'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNzg2N2QxMTAtODJiMi0xMWU5LTliNjItN2I4ZWFjMmFjNTZmIiwiaWF0IjoxNTU5MjAzODc4fQ.NeH8rOKmxY_IcTgbDHaKLPjyASdUqCM4wzIRi0eEjfs' 
             }
           };
 
         axios.post('http://localhost:8080/Admin/createsurvey',this.state,axiosConfig)
         .then(response=>{
-            console.log(response)
+             this.setState({msgerror:response.data.message})
         }).catch(error=>{
             console.log(error)  
         })  
@@ -73,6 +74,20 @@ class AddSurvey extends Component {
       <Header as='h2' textAlign='center'>
       New Survey
     </Header>
+    <br/>
+       <br/>
+       <div>
+         {this.state.msgerror?
+         <Message positive>
+         <Message.Header>
+          {this.state.msgerror}
+         </Message.Header>
+         </Message>
+         :null
+         }
+       </div>
+       <br/>
+       <br/>
          <Form>
     <Form.Field>
       <label>Survey Title</label>

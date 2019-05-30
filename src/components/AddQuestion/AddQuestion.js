@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {Form,Button,Checkbox,Header, Input} from 'semantic-ui-react'
+import {Form,Button,Message,Header, Input} from 'semantic-ui-react'
 import axios from 'axios';
 
 
@@ -7,12 +7,13 @@ class AddQuestion extends Component {
    
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = { 
       question:"",
       questiontype:"created",
       Answers: [{answer:""}],
-      Surveyid:"2c022520-7f9a-11e9-9974-b543e76e34c1",
-      errors: {}
+      Surveyid:"488790d0-82bb-11e9-807f-a78b186f9a72",
+      errors: {},
+      msgerror:''
     }
      this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -93,14 +94,17 @@ handleSubmit(event) {
       let axiosConfig = {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiZmM1NzNiZDAtN2Y5OS0xMWU5LTk5NzQtYjU0M2U3NmUzNGMxIiwiaWF0IjoxNTU4OTQwMjU0LCJleHAiOjE1NTkwMjY2NTR9.82VHzN6ND2ZMN4mYdTHuHB6nSbD-Sy2MpkugKUqBvEk' 
-        }
+          'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNzg2N2QxMTAtODJiMi0xMWU5LTliNjItN2I4ZWFjMmFjNTZmIiwiaWF0IjoxNTU5MjAzODc4fQ.NeH8rOKmxY_IcTgbDHaKLPjyASdUqCM4wzIRi0eEjfs' 
+        }    
       };  
+      console.log(JSON.stringify(this.state));
       axios.post('http://localhost:8080/Admin/createquestion',JSON.stringify(this.state),axiosConfig)
     .then(response=>{
-        console.log(response)
+        this.setState({
+          msgerror:response.data.message
+        })
     }).catch(error=>{
-        console.log(error)  
+            console.log(error)
     }) 
     }else{
       alert('Dear User No Internet Connection Available');
@@ -117,8 +121,20 @@ handleSubmit(event) {
       <Header as='h2' textAlign='center'>
       New Question
     </Header> 
-
-
+    <br/>
+       <br/>
+       <div>
+         {this.state.msgerror?
+         <Message positive>
+         <Message.Header>
+          {this.state.msgerror}
+         </Message.Header>
+         </Message>
+         :null
+         }
+       </div>
+       <br/>
+       <br/>
     <Form onSubmit={this.handleSubmit}>
     <Form.Field>
       <label>Question</label>
@@ -141,10 +157,9 @@ handleSubmit(event) {
         value='Add Answer' onClick={this.addClick.bind(this)}/>
         </div> 
         </Form.Field>  
-         
-
-
         <br/>  
+
+
     <Button fluid color='red'>Create New Question</Button>
 
   </Form>

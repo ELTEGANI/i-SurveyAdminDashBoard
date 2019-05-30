@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {Form,Button,TextArea,Header} from 'semantic-ui-react'
+import {Form,Button,Message,Header} from 'semantic-ui-react'
 import axios from 'axios';
 
 
@@ -10,8 +10,9 @@ class AddCollector extends Component {
         lastname:'',
         email:'',
         password:'',
-        errors:{}
-    }
+        errors:{},
+        msgerror:''
+    }   
     
   
     handleChange = (e) => {
@@ -50,12 +51,15 @@ class AddCollector extends Component {
       let axiosConfig = {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNzEwZTYzODAtN2FkMi0xMWU5LTg3YjktMGI0NjY1YzVlNDg0IiwiaWF0IjoxNTU4MzM3OTk0LCJleHAiOjE1NTg0MjQzOTR9.xHFVUf4TE4ajHYMJ1D7wi4rF7-uLvPISklT4MLFE7no' 
+          'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNzg2N2QxMTAtODJiMi0xMWU5LTliNjItN2I4ZWFjMmFjNTZmIiwiaWF0IjoxNTU5MjAzODc4fQ.NeH8rOKmxY_IcTgbDHaKLPjyASdUqCM4wzIRi0eEjfs' 
         }
       };
     axios.post('http://localhost:8080/Admin/addcollector',this.state,axiosConfig)
     .then(response=>{
-        console.log(response)
+        this
+        .setState({
+          msgerror:response.data.message
+        })
     }).catch(error=>{
         console.log(error)  
     }) 
@@ -67,12 +71,26 @@ class AddCollector extends Component {
 
       render(){
         const {errors} = this.state;  
-
+    
           return(
             <div>   
       <Header as='h2' textAlign='center'>
       New Data Collector 
     </Header>
+       <br/>
+       <br/>
+       <div>
+         {this.state.msgerror?
+         <Message positive>
+         <Message.Header>
+          {this.state.msgerror}
+         </Message.Header>
+         </Message>
+         :null
+         }
+       </div>
+       <br/>
+       <br/>
          <Form>
     <Form.Field>
       <label>FirstName</label>
@@ -128,7 +146,9 @@ class AddCollector extends Component {
     onClick={this.createCollectorHandler}
     >Create New Collector</Button>
 
+
   </Form>
+      
             </div>
           );
           
