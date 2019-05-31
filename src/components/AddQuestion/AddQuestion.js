@@ -11,7 +11,7 @@ class AddQuestion extends Component {
       question:"",
       questiontype:"created",
       Answers: [{answer:""}],
-      Surveyid:"488790d0-82bb-11e9-807f-a78b186f9a72",
+      Surveyid:localStorage.getItem('Surveysid'),
       errors: {},
       msgerror:''
     }
@@ -94,7 +94,7 @@ handleSubmit(event) {
       let axiosConfig = {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNzg2N2QxMTAtODJiMi0xMWU5LTliNjItN2I4ZWFjMmFjNTZmIiwiaWF0IjoxNTU5MjAzODc4fQ.NeH8rOKmxY_IcTgbDHaKLPjyASdUqCM4wzIRi0eEjfs' 
+          'Authorization': 'Bearer ' + localStorage.getItem('accesstoken')
         }    
       };  
       console.log(JSON.stringify(this.state));
@@ -110,7 +110,7 @@ handleSubmit(event) {
       alert('Dear User No Internet Connection Available');
     }
   }
-    
+     
    }
 
 

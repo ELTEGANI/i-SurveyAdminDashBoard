@@ -49,13 +49,14 @@ class AddSurvey extends Component {
           let axiosConfig = {
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNzg2N2QxMTAtODJiMi0xMWU5LTliNjItN2I4ZWFjMmFjNTZmIiwiaWF0IjoxNTU5MjAzODc4fQ.NeH8rOKmxY_IcTgbDHaKLPjyASdUqCM4wzIRi0eEjfs' 
+              'Authorization': 'Bearer ' + localStorage.getItem('accesstoken')
             }
           };
 
         axios.post('http://localhost:8080/Admin/createsurvey',this.state,axiosConfig)
         .then(response=>{
              this.setState({msgerror:response.data.message})
+             localStorage.setItem('Surveysid',response.data.Surveys.id);
         }).catch(error=>{
             console.log(error)  
         })  
